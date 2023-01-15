@@ -93,10 +93,10 @@ function getPasswordOptions() {
   let options = {
     noCharacters: null,
     whichCharacters: {
-      lowerCase: true,
-      upperCase: true,
-      numeric: true,
-      special: true,
+      lowerCase: false,
+      upperCase: false,
+      numeric: false,
+      special: false,
     },
     lowerCasedCharacters: lowerCasedCharacters,
     upperCasedCharacters: upperCasedCharacters,
@@ -104,7 +104,9 @@ function getPasswordOptions() {
     specialCharacters: specialCharacters,
   }
   options.noCharacters = prompt("Choose password length between 10 and 64 characters.");
-  if(options.noCharacters<10 || options.noCharacters>64){
+  // check that users input isn't over 2 characters (to catch decimal entries and other oddities) 
+  // and that it parses as an Int and is between 10 and 64 (inclusive)
+  if(options.noCharacters.length>2 || !(parseInt(options.noCharacters)) || parseInt(options.noCharacters)<10 || parseInt(options.noCharacters)>64){
     alert("You have chosen either too many or too few characters for your password. Please enter between 10 and 64 characters.");
     options = getPasswordOptions();
   } else {
@@ -112,6 +114,7 @@ function getPasswordOptions() {
     options.whichCharacters.upperCase = confirm("Choose OK to include uppercase characters in the password or Cancel to exclude these characters.");
     options.whichCharacters.numeric = confirm("Choose OK to include numbers in the password or Cancel to exclude these characters.");
     options.whichCharacters.special = confirm("Choose OK to include special characters in the password or Cancel to exclude these characters.");
+    // check to make sure at least one character type is selected
     if(options.whichCharacters.lowerCase===false && options.whichCharacters.upperCase===false && options.whichCharacters.numeric===false && options.whichCharacters.special===false){
       alert("You must choose at least one character type for the password!")
       options = getPasswordOptions();
@@ -155,10 +158,10 @@ function generatePassword() {
   // loop through while loop until length of passwordArray is the same as number of characters selected
   while(passwordArray.length < options.noCharacters){
     let nextCharacterType = Math.floor(Math.random() * characterTypesSelected.length);
-    console.log(characterTypesSelected[nextCharacterType]);
     let nextCharacter = getRandom(options[characterTypesSelected[nextCharacterType]]);
-    console.log(nextCharacter);
-    passwordArray.push(nextCharacter);
+    // picking a random position to insert next character to further randomise
+    let nextPosition = Math.floor(Math.random() * passwordArray.length);
+    passwordArray.splice(nextPosition, 0, nextCharacter);
     } 
   
   // using join to turn the array into a string - read about the join function on the below page
